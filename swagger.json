@@ -1,0 +1,329 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API de Node - Sistema de Gestão Hospitalar",
+        "description": "Pensando na facilidade para marcação de consulta em um hospital, foi criado uma API para marcação de consultas por parte do atendimento de terceiros (atendente e afins).",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:3000",
+            "description": "Rota principal da API Node"
+        }
+    ],
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "summary": "Login do funcionário",
+                "description": "Validação e Autenticação do código do funcionário e senha cadastrada",
+                "tags": [
+                    "Employee"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schema/EmployeeLogin"
+                            },
+                            "examples": {
+                                "login": {
+                                    "value": {
+                                        "employeeCode": 1,
+                                        "password": "1"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Autenticação Realizada com sucesso!"
+                    },
+                    "404": {
+                        "description": "Funcionário não encontrado."
+                    },
+                    "400": {
+                        "description": "Código do funcionário e a senha é obrigatório."
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "summary": "Registro de novo do funcionário",
+                "description": "Cadastro de novo funcionário, com passagem de parâmetros como Nome, CPF, Código de Funcionário, Senha e Confimação de Senha ",
+                "tags": [
+                    "Employee"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schema/EmployeeRegister"
+                            },
+                            "examples": {
+                                "login": {
+                                    "value": {
+                                        "cpf": "12345678901",
+                                        "employeeCode": 1234,
+                                        "name": "Maria José da Silva",
+                                        "password": "1234",
+                                        "confirmpassword": "1234"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Novo Funcionário Criado com Sucesso!"
+                    },
+                    "400": {
+                        "description": "Funcionário já cadastrado."
+                    },
+                    "500": {
+                        "description": "Erro ao tentar cadastrar novo funcionário."
+                    }
+                }
+            }
+        },
+        "/list-appointment": {
+            "get": {
+                "summary": "Listagem de todas as consultas marcadas",
+                "description": "Trás todas as consultas marcadas no banco de dados, com dados como CPF do paciente, nome do paciente, data de nascimento e telefone do mesmo, nome do médico que irá atende-lo e sua especialidade.",
+                "tags": [
+                    "Appointment"
+                ],
+                "responses": {
+                    "500": {
+                        "description": "Não foi possivel retornar a lista de consultas."
+                    },
+                    "200": {
+                        "description": "Lista de consultas:"
+                    }
+                }
+            }
+        },
+        "/new-appointment": {
+            "post": {
+                "summary": "Marcação de nova consulta",
+                "description": "Marcação de consulta, relizada pela atendente com dados fornecidos pelo paciente.",
+                "tags": [
+                    "Appointment"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schema/NewAppointment"
+                            },
+                            "examples": {
+                                "newAppointment": {
+                                    "value": {
+                                        "patient_cpf": "12345678901",
+                                        "patient_name": "Mariana Silveira Soares",
+                                        "patient_birthDate": "25/07/1992",
+                                        "patient_phone": "123456789",
+                                        "doctor_specialisation": "Otorrinolaringologista",
+                                        "doctor_name": "Roberto Guilherme Trovano"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Nova consulta marcada!"
+                    },
+                    "500": {
+                        "description": "Não foi possivel marcar a consulta."
+                    }
+                }
+            }
+        },
+        "/appointment-update/{idAppointment}": {
+            "put": {
+                "summary": "Atualização de consulta",
+                "description": "Atualização de dados de uma consulta especifíca",
+                "tags": [
+                    "Appointment"
+                ],
+                "parameters": [
+                    {
+                        "name": "idAppointment",
+                        "in": "path",
+                        "description": "Id da consulta a ser atualizada.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schema/UpdateAppointment"
+                            },
+                            "examples": {
+                                "updateAppointment": {
+                                    "value": {
+                                        "patient_cpf": "12345678901",
+                                        "patient_name": "Mariana de Souza Soares",
+                                        "patient_birthDate": "12/07/1992",
+                                        "patient_phone": "123456789",
+                                        "doctor_specialisation": "Otorrinolaringologista",
+                                        "doctor_name": "Roberto Guilherme Trovano"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Registro de paciente atualizado!"
+                    },
+                    "500": {
+                        "description": "Falha na requisição de atualização de consulta."
+                    }
+                }
+            }
+        },
+        "/delete-appointment/{idAppointment}": {
+            "delete": {
+                "summary": "Exclusão de consulta",
+                "description": "Exclusão de dados de uma consulta especifíca",
+                "tags": [
+                    "Appointment"
+                ],
+                "parameters": [
+                    {
+                        "name": "idAppointment",
+                        "in": "path",
+                        "description": "Id da consulta a ser excluída.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Consulta excluída!"
+                    },
+                    "500": {
+                        "description": "Falha na exclusão de consulta."
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schema": {
+            "EmployeeLogin": {
+                "type": "object",
+                "properties": {
+                    "employeeCode": {
+                        "type": "number"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            },
+            "EmployeeRegister": {
+                "type": "object",
+                "properties": {
+                    "cpf": {
+                        "type": "string"
+                    },
+                    "employeeCode": {
+                        "type": "number"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "confirmpassword": {
+                        "type": "string"
+                    }
+                }
+            },
+            "NewAppointment": {
+                "type": "object",
+                "properties": {
+                    "patient_cpf": {
+                        "type": "string"
+                    },
+                    "patient_name": {
+                        "type": "number"
+                    },
+                    "patient_birthDate": {
+                        "type": "string"
+                    },
+                    "patient_phone": {
+                        "type": "string"
+                    },
+                    "doctor_specialisation": {
+                        "type": "string"
+                    },
+                    "doctor_name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "UpdateAppointment": {
+                "type": "object",
+                "properties": {
+                    "patient_cpf": {
+                        "type": "string"
+                    },
+                    "patient_name": {
+                        "type": "number"
+                    },
+                    "patient_birthDate": {
+                        "type": "string"
+                    },
+                    "patient_phone": {
+                        "type": "string"
+                    },
+                    "doctor_specialisation": {
+                        "type": "string"
+                    },
+                    "doctor_name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DeleteAppointment": {
+                "type": "object",
+                "properties": {
+                    "patient_cpf": {
+                        "type": "string"
+                    },
+                    "patient_name": {
+                        "type": "number"
+                    },
+                    "patient_birthDate": {
+                        "type": "string"
+                    },
+                    "patient_phone": {
+                        "type": "string"
+                    },
+                    "doctor_specialisation": {
+                        "type": "string"
+                    },
+                    "doctor_name": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
