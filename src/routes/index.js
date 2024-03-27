@@ -5,7 +5,9 @@ const doctor = require("./doctorRoutes.js");
 const patient = require("./patientRoutes.js");
 
 const routes = (app) => {
-  app.route("/").get((req, res) => res.status(200).send());
+  app
+    .route("/")
+    .get((req, res) => res.status(200).send("Sistema de Gestão Hospitalar"));
 
   app.use(express.json(), auth, doctor, appointment, patient);
 };
