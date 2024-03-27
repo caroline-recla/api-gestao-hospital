@@ -30,13 +30,19 @@ class authController {
       return res.statsu(400).json({ msg: "Senhas não correspondem" });
     }
 
-    const employeeCodeExist = await Employee.findOne({
-      where: { employeeCode: employeeCode },
-    });
-    const employeeCpfExist = await Employee.findOne({ where: { cpf: cpf } });
+    try {
+      const employeeCodeExist = await Employee.findOne({
+        where: { employeeCode: employeeCode },
+      });
+      const employeeCpfExist = await Employee.findOne({ where: { cpf: cpf } });
 
-    if (employeeCodeExist || employeeCpfExist) {
-      return res.status(400).json({ msg: "Funcionário já cadastrado" });
+      if (employeeCodeExist || employeeCpfExist) {
+        res.status(400).json({ msg: "Funcionário já cadastrado" });
+      }
+    } catch (error) {
+      res
+        .status(500)
+        .json({ msg: "Erro ao tentar comparar funcionário no banco." });
     }
 
     const salt = await bcrypt.genSalt(12);
@@ -55,7 +61,6 @@ class authController {
         .status(201)
         .json({ msg: "Novo Funcionário Criado com Sucesso!", newEmployee });
     } catch (error) {
-      console.log(error);
       res
         .status(500)
         .json({ msg: `Erro ao cadastrar novo funcionário. ${error}` });
@@ -94,7 +99,6 @@ class authController {
         .status(201)
         .json({ msg: "Autenticação Realizada com sucesso!", token });
     } catch (error) {
-      console.log(error);
       res.status(500).json({ msg: "Erro de login", error });
     }
   }
