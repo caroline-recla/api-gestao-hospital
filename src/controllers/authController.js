@@ -95,7 +95,7 @@ class authController {
     }
 
     try {
-      const secret = process.env.SECRET;
+      const secret = "JSLKJlkjslajoiwj2392i02iqsSAASMKEPEKVdqLPKDKWPOKDWP";
 
       const token = await jwt.sign({ id: employeeExist.id }, secret);
 
