@@ -4,63 +4,59 @@ const Employee = require("../models/Employee.js");
 
 class authController {
   static async registerWithToken(req, res) {
-    try {
-      const { cpf, employeeCode, name, password, confirmpassword } = req.body;
+    const { cpf, employeeCode, name, password, confirmpassword } = req.body;
 
-      if (!cpf) {
-        return res
-          .status(400)
-          .json({ msg: "CPF do funcionário é obrigatório" });
-      }
-      if (!employeeCode) {
-        return res
-          .status(400)
-          .json({ msg: "Código do funcionário é obrigatório!" });
-      }
-      if (!name) {
-        return res
-          .status(400)
-          .json({ msg: "Nome do Funcionário é obrigatório." });
-      }
-      if (!password) {
-        return res.status(400).json({ msg: "Senha Obrigatória" });
-      }
-      if (!confirmpassword) {
-        return res.status(400).json({ msg: "Senha Obrigatória!" });
-      }
-
-      if (!password == confirmpassword) {
-        return res.statsu(400).json({ msg: "Senhas não correspondem" });
-      }
-
-      const employeeCodeExist = await Employee.findOne({
-        where: { employeeCode: employeeCode },
-      });
-      const employeeCpfExist = await Employee.findOne({
-        where: { cpf: cpf },
-      });
-
-      if (employeeCodeExist || employeeCpfExist) {
-        return res.status(400).json({ msg: "Funcionário já cadastrado" });
-      }
-
-      const salt = await bcrypt.genSalt(12);
-      const passwordHash = await bcrypt.hash(password, salt);
-      const newEmployee = Employee.create({
-        cpf,
-        employeeCode,
-        name,
-        password: passwordHash,
-        createdAt: Date.now(),
-      });
-
+    if (!cpf) {
+      return res.status(400).json({ msg: "CPF do funcionário é obrigatório" });
+    }
+    if (!employeeCode) {
       return res
+        .status(400)
+        .json({ msg: "Código do funcionário é obrigatório!" });
+    }
+    if (!name) {
+      return res
+        .status(400)
+        .json({ msg: "Nome do Funcionário é obrigatório." });
+    }
+    if (!password) {
+      return res.status(400).json({ msg: "Senha Obrigatória" });
+    }
+    if (!confirmpassword) {
+      return res.status(400).json({ msg: "Senha Obrigatória!" });
+    }
+
+    if (!password == confirmpassword) {
+      return res.statsu(400).json({ msg: "Senhas não correspondem" });
+    }
+
+    const employeeCodeExist = await Employee.findOne({
+      where: { employeeCode: employeeCode },
+    });
+    const employeeCpfExist = await Employee.findOne({ where: { cpf: cpf } });
+
+    if (employeeCodeExist || employeeCpfExist) {
+      return res.status(400).json({ msg: "Funcionário já cadastrado" });
+    }
+
+    const salt = await bcrypt.genSalt(12);
+    const passwordHash = await bcrypt.hash(password, salt);
+    const newEmployee = Employee.create({
+      cpf,
+      employeeCode,
+      name,
+      password: passwordHash,
+      createdAt: Date.now(),
+    });
+
+    try {
+      newEmployee;
+      res
         .status(201)
         .json({ msg: "Novo Funcionário Criado com Sucesso!", newEmployee });
     } catch (error) {
       console.log(error);
-
-      return res
+      res
         .status(500)
         .json({ msg: `Erro ao cadastrar novo funcionário. ${error}` });
     }
@@ -98,6 +94,7 @@ class authController {
         .status(201)
         .json({ msg: "Autenticação Realizada com sucesso!", token });
     } catch (error) {
+      console.log(error);
       res.status(500).json({ msg: "Erro de login", error });
     }
   }
