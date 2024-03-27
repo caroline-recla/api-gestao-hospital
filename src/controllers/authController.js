@@ -4,64 +4,63 @@ const Employee = require("../models/Employee.js");
 
 class authController {
   static async registerWithToken(req, res) {
-    const { cpf, employeeCode, name, password, confirmpassword } = req.body;
-
-    if (!cpf) {
-      return res.status(400).json({ msg: "CPF do funcionário é obrigatório" });
-    }
-    if (!employeeCode) {
-      return res
-        .status(400)
-        .json({ msg: "Código do funcionário é obrigatório!" });
-    }
-    if (!name) {
-      return res
-        .status(400)
-        .json({ msg: "Nome do Funcionário é obrigatório." });
-    }
-    if (!password) {
-      return res.status(400).json({ msg: "Senha Obrigatória" });
-    }
-    if (!confirmpassword) {
-      return res.status(400).json({ msg: "Senha Obrigatória!" });
-    }
-
-    if (!password == confirmpassword) {
-      return res.statsu(400).json({ msg: "Senhas não correspondem" });
-    }
-
     try {
+      const { cpf, employeeCode, name, password, confirmpassword } = req.body;
+
+      if (!cpf) {
+        return res
+          .status(400)
+          .json({ msg: "CPF do funcionário é obrigatório" });
+      }
+      if (!employeeCode) {
+        return res
+          .status(400)
+          .json({ msg: "Código do funcionário é obrigatório!" });
+      }
+      if (!name) {
+        return res
+          .status(400)
+          .json({ msg: "Nome do Funcionário é obrigatório." });
+      }
+      if (!password) {
+        return res.status(400).json({ msg: "Senha Obrigatória" });
+      }
+      if (!confirmpassword) {
+        return res.status(400).json({ msg: "Senha Obrigatória!" });
+      }
+
+      if (!password == confirmpassword) {
+        return res.statsu(400).json({ msg: "Senhas não correspondem" });
+      }
+
       const employeeCodeExist = await Employee.findOne({
         where: { employeeCode: employeeCode },
       });
-      const employeeCpfExist = await Employee.findOne({ where: { cpf: cpf } });
+      const employeeCpfExist = await Employee.findOne({
+        where: { cpf: cpf },
+      });
 
       if (employeeCodeExist || employeeCpfExist) {
-        res.status(400).json({ msg: "Funcionário já cadastrado" });
+        return res.status(400).json({ msg: "Funcionário já cadastrado" });
       }
-    } catch (error) {
-      res
-        .status(500)
-        .json({ msg: "Erro ao tentar comparar funcionário no banco." });
-    }
 
-    const salt = await bcrypt.genSalt(12);
-    const passwordHash = await bcrypt.hash(password, salt);
-    const newEmployee = Employee.create({
-      cpf,
-      employeeCode,
-      name,
-      password: passwordHash,
-      createdAt: Date.now(),
-    });
+      const salt = await bcrypt.genSalt(12);
+      const passwordHash = await bcrypt.hash(password, salt);
+      const newEmployee = Employee.create({
+        cpf,
+        employeeCode,
+        name,
+        password: passwordHash,
+        createdAt: Date.now(),
+      });
 
-    try {
-      newEmployee;
-      res
+      return res
         .status(201)
         .json({ msg: "Novo Funcionário Criado com Sucesso!", newEmployee });
     } catch (error) {
-      res
+      console.log(error);
+
+      return res
         .status(500)
         .json({ msg: `Erro ao cadastrar novo funcionário. ${error}` });
     }

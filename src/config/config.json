@@ -1,9 +1,15 @@
 {
     "development": {
-        "username": "postgres",
-        "password": "postgres",
-        "database": "hospital",
-        "host": "",
-        "dialect": "postgres"
+        "host": "desafio5.postgres.database.azure.com",
+        "username": "postgree",
+        "password": "modal12#GR",
+        "port": 5432,
+        "database": "postgres",
+        "dialect": "postgres",
+        "dialectOptions": {
+            "ssl": {
+                "require": true
+            }
+        }
     }
 }

@@ -14,6 +14,11 @@ const config = {
   port: 5432,
   database: "postgres",
   dialect: "postgres",
+  dialectOptions: {
+    ssl: {
+      require: true,
+    },
+  },
 };
 
 const { username, password, database } = config;
@@ -28,6 +33,7 @@ const connection = new Sequelize(database, username, password, {
   dialect: config.dialect,
   dialectModule: pg,
   port: 5432,
+  ssl: true,
 });
 
 async function connectionDatabase() {
