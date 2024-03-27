@@ -38,7 +38,7 @@ class authController {
       const employeeCpfExist = await Employee.findOne({ where: { cpf: cpf } });
 
       if (employeeCodeExist || employeeCpfExist) {
-        res.status(400).json({ msg: "Funcionário já cadastrado" });
+        return res.status(400).json({ msg: "Funcionário já cadastrado" });
       }
     } catch (error) {
       res
@@ -72,10 +72,12 @@ class authController {
     const { employeeCode, password } = req.body;
 
     if (!employeeCode) {
-      res.status(400).json({ msg: "Código do funcionário obrigatório." });
+      return res
+        .status(400)
+        .json({ msg: "Código do funcionário obrigatório." });
     }
     if (!password) {
-      res.status(400).json({ msg: "Senha obrigatória" });
+      return res.status(400).json({ msg: "Senha obrigatória" });
     }
 
     const employeeExist = await Employee.findOne({
@@ -83,7 +85,7 @@ class authController {
     });
 
     if (!employeeExist) {
-      res.status(404).json({ msg: "Funcionário não encontrado" });
+      return res.status(404).json({ msg: "Funcionário não encontrado" });
     }
 
     const checkPassword = bcrypt.compare(password, employeeExist.password);
@@ -101,11 +103,11 @@ class authController {
 
       console.log("TOKEN: ", token);
 
-      res
+      return res
         .status(201)
         .json({ msg: "Autenticação Realizada com sucesso!", token });
     } catch (error) {
-      res.status(500).json({ msg: "Erro de login", error });
+      return res.status(500).json({ msg: "Erro de login", error });
     }
   }
 
