@@ -88,7 +88,10 @@ class authController {
       return res.status(404).json({ msg: "Funcionário não encontrado" });
     }
 
-    const checkPassword = bcrypt.compare(password, employeeExist.password);
+    const checkPassword = await bcrypt.compare(
+      password,
+      employeeExist.password
+    );
 
     if (!checkPassword) {
       return res.status(400).json({ msg: "Senha Incorreta" });
