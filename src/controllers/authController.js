@@ -69,38 +69,38 @@ class authController {
   }
 
   static async loginEmployee(req, res) {
-    const { employeeCode, password } = req.body;
-
-    if (!employeeCode) {
-      return res
-        .status(400)
-        .json({ msg: "Código do funcionário obrigatório." });
-    }
-    if (!password) {
-      return res.status(400).json({ msg: "Senha obrigatória" });
-    }
-
-    const employeeExist = await Employee.findOne({
-      where: { employeeCode: employeeCode },
-    });
-
-    if (!employeeExist) {
-      return res.status(404).json({ msg: "Funcionário não encontrado" });
-    }
-
-    const checkPassword = await bcrypt.compare(
-      password,
-      employeeExist.password
-    );
-
-    if (!checkPassword) {
-      return res.status(400).json({ msg: "Senha Incorreta" });
-    }
-
     try {
+      const { employeeCode, password } = req.body;
+
+      if (!employeeCode) {
+        return res
+          .status(400)
+          .json({ msg: "Código do funcionário obrigatório." });
+      }
+      if (!password) {
+        return res.status(400).json({ msg: "Senha obrigatória" });
+      }
+
+      const employeeExist = await Employee.findOne({
+        where: { employeeCode: employeeCode },
+      });
+
+      if (!employeeExist) {
+        return res.status(404).json({ msg: "Funcionário não encontrado" });
+      }
+
+      const checkPassword = await bcrypt.compare(
+        password,
+        employeeExist.password
+      );
+
+      if (!checkPassword) {
+        return res.status(400).json({ msg: "Senha Incorreta" });
+      }
+
       const secret = "JSLKJlkjslajoiwj2392i02iqsSAASMKEPEKVdqLPKDKWPOKDWP";
 
-      const token = await jwt.sign({ id: employeeExist.id }, secret);
+      const token = jwt.sign({ id: employeeExist.id }, secret);
 
       return res
         .status(201)
