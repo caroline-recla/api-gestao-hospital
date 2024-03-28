@@ -69,7 +69,6 @@ class authController {
   }
 
   static async loginEmployee(req, res) {
-    return res.status(400).json({ msg: "Código do funcionário obrigatório." });
     try {
       const { employeeCode, password } = req.body;
 
